@@ -1,44 +1,30 @@
-function handleFileSelect(event) {
-  const file = event.target.files[0];
-  const reader = new FileReader();
+document.getElementById('generate-btn').addEventListener('click', function() {
+  var background = document.getElementById('background-image-input').files[0];
+  var overlay = document.getElementById('overlay-image-input').files[0];
 
-  reader.onload = function (e) {
-    const img = new Image();
-    img.src = e.target.result;
+  var reader = new FileReader();
 
-    img.onload = function () {
-      const overlayImg = new Image();
-      overlayImg.src = 'https://i.ibb.co/FgMTyhD/05.png'; // Replace 'overlay.png' with your overlay image path
+  reader.onload = function(e) {
+    var backgroundImg = e.target.result;
+    var imgContainer = document.getElementById('image-container');
+    imgContainer.innerHTML = `<img src="${backgroundImg}" alt="Background Image">`;
 
-      overlayImg.onload = function () {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+    var overlayImg = new Image();
+    overlayImg.src = URL.createObjectURL(overlay);
+    overlayImg.onload = function() {
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      canvas.width = overlayImg.width;
+      canvas.height = overlayImg.height;
+      ctx.drawImage(backgroundImg, 0, 0, overlayImg.width, overlayImg.height);
+      ctx.globalAlpha = 0.5; // Adjust opacity as needed
+      ctx.drawImage(overlayImg, 0, 0, overlayImg.width, overlayImg.height);
+      imgContainer.appendChild(canvas);
 
-        canvas.width = img.width;
-        canvas.height = img.height;
-
-        ctx.drawImage(img, 0, 0);
-        ctx.drawImage(overlayImg, 0, 0, img.width, img.height);
-
-        const imageContainer = document.getElementById('imageContainer');
-        imageContainer.innerHTML = ''; // Clear previous image if any
-        imageContainer.appendChild(canvas);
-      };
+      var downloadLink = document.getElementById('download-link');
+      downloadLink.href = canvas.toDataURL('image/jpeg');
     };
   };
 
-  reader.readAsDataURL(file);
-}
-
-document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-
-function downloadImage() {
-  const canvas = document.querySelector('canvas');
-  const url = canvas.toDataURL(); // default is png
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'image_with_overlay.png'; // You can customize the downloaded file name here
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+  reader.readAsDataURL(background);
+});
