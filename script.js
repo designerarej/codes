@@ -9,7 +9,7 @@ function overlayImage() {
 
     img.onload = function () {
       const overlayImg = new Image();
-      overlayImg.src = 'overlay.png'; // Replace 'overlay.png' with your overlay image path
+      overlayImg.src = 'https://i.ibb.co/FgMTyhD/05.png'; // Replace 'overlay.png' with your overlay image path
 
       overlayImg.onload = function () {
         const canvas = document.createElement('canvas');
